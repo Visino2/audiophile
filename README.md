@@ -261,7 +261,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Contact
 
-victor aba - [@yourtwitter](https://twitter.com/Smithvictor_2)
+victor aba - [@visino twitter](https://twitter.com/Smithvictor_2)
 
 Project Link: [https://github.com/yourusername/audiophile](https://github.com/Visino2/audiophile)
 
