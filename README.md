@@ -25,17 +25,6 @@ A premium, fully-responsive e-commerce web application for high-end audio equipm
 - **Image Optimization**: Next.js Image component for optimized loading
 - **Tailwind CSS**: Utility-first styling with custom design tokens
 
-## 📸 Screenshots
-
-### Desktop View
-![Desktop Home](https://via.placeholder.com/800x500/FAFAFA/191919?text=Desktop+Home)
-
-### Mobile View
-![Mobile View](https://via.placeholder.com/400x700/FAFAFA/191919?text=Mobile+View)
-
-### Checkout
-![Checkout Flow](https://via.placeholder.com/800x500/FAFAFA/191919?text=Checkout)
-
 ## 🛠️ Tech Stack
 
 - **Framework**: [Next.js 14](https://nextjs.org/)
