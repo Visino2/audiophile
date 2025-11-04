@@ -1,15 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useMutation } from 'convex/react';
+import { api } from '../../../../convex/_generated/api';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
-import { useCart } from '@/app/context/CartContext';
+import { getOrCreateSessionId } from '@/app/lib/session';
 
 export default function YX1EarphonesPage() {
   const [quantity, setQuantity] = useState(1);
-  const { addToCart, openCart } = useCart();
+  const [sessionId, setSessionId] = useState<string>('');
+  const [isAdding, setIsAdding] = useState(false);
+
+  useEffect(() => {
+    setSessionId(getOrCreateSessionId());
+  }, []);
+
+  const addToCart = useMutation(api.carts.addToCart);
 
   const product = {
     id: 'yx1-earphones',
@@ -19,11 +28,26 @@ export default function YX1EarphonesPage() {
     image: '/Bitmap-12.png',
   };
 
-  const handleAddToCart = () => {
-  addToCart(product, quantity);
-  openCart();
-  setQuantity(1);
-};
+  const handleAddToCart = async () => {
+    if (!sessionId || isAdding) return;
+    
+    setIsAdding(true);
+    try {
+      await addToCart({
+        sessionId,
+        productId: product.id,
+        quantity,
+      });
+      
+      setQuantity(1);
+      // Optional: trigger a toast notification instead of alert
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert(error instanceof Error ? error.message : 'Failed to add to cart');
+    } finally {
+      setIsAdding(false);
+    }
+  };
 
   const incrementQuantity = () => setQuantity((prev) => prev + 1);
   const decrementQuantity = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
@@ -34,7 +58,10 @@ export default function YX1EarphonesPage() {
 
       {/* Go Back */}
       <div className="max-w-[1110px] mx-auto px-6 lg:px-0 mt-[16px] md:mt-[33px] lg:mt-[79px]">
-        <Link href="/earphones" className="text-[15px] text-black/50 hover:text-[#D87D4A] transition-colors">
+        <Link
+          href="/headphones"
+          className="text-[15px] text-black/50 hover:text-[#D87D4A] transition-colors"
+        >
           Go Back
         </Link>
       </div>
@@ -45,54 +72,50 @@ export default function YX1EarphonesPage() {
           {/* Image */}
           <div className="relative w-full h-[327px] md:h-[480px] bg-[#F1F1F1] rounded-lg overflow-hidden flex items-center justify-center">
             <div className="relative w-[200px] h-[200px] md:w-[280px] md:h-[280px] lg:w-[300px] lg:h-[300px]">
-              <Image 
-                src={product.image} 
-                alt={product.name} 
-                fill 
-                className="object-contain" 
-              />
+              <Image src={product.image} alt={product.name} fill className="object-contain" />
             </div>
           </div>
 
           {/* Info */}
-          <div className="w-full">
-            <p className="text-[#D87D4A] text-[14px] tracking-[10px] uppercase mb-[24px]">
-              NEW PRODUCT
-            </p>
+          <div className="w-full text-center md:text-left">
             <h1 className="text-[28px] md:text-[40px] leading-[38px] md:leading-[44px] font-bold tracking-[1px] md:tracking-[1.43px] uppercase mb-[24px] md:mb-[32px]">
-              YX1 WIRELESS<br />EARPHONES
+              XX99 MARK I <br />
+              HEADPHONES
             </h1>
             <p className="text-black/50 text-[15px] leading-[25px] mb-[24px] md:mb-[32px]">
-              Tailor your listening experience with bespoke dynamic drivers from the new YX1 Wireless Earphones. Enjoy incredible high-fidelity sound even in noisy environments with its active noise cancellation feature.
+              As the gold standard for headphones, the classic XX99 Mark I offers detailed and accurate audio reproduction for audiophiles, mixing engineers, and music aficionados alike in studios and on the go.
             </p>
             <p className="font-bold text-[18px] tracking-[1.29px] mb-[31px] md:mb-[47px]">
               $ {product.price.toLocaleString()}
             </p>
 
             {/* Quantity + Add to Cart */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center bg-[#F1F1F1]">
+            <div className="flex items-center gap-4 justify-center md:justify-start">
+              <div className="flex items-center bg-[#F1F1F1] h-[48px]">
                 <button
                   onClick={decrementQuantity}
-                  className="px-[15px] py-[15px] text-black/25 hover:text-[#D87D4A] font-bold text-[13px] tracking-[1px] transition-colors"
+                  className="px-[15px] h-full text-black/25 hover:text-[#D87D4A] font-bold text-[13px] tracking-[1px] transition-colors"
+                  type="button"
                 >
                   -
                 </button>
-                <span className="px-[20px] font-bold text-[13px] tracking-[1px]">
+                <span className="px-[20px] h-full flex items-center font-bold text-[13px] tracking-[1px] min-w-[60px] justify-center">
                   {quantity}
                 </span>
                 <button
                   onClick={incrementQuantity}
-                  className="px-[15px] py-[15px] text-black/25 hover:text-[#D87D4A] font-bold text-[13px] tracking-[1px] transition-colors"
+                  className="px-[15px] h-full text-black/25 hover:text-[#D87D4A] font-bold text-[13px] tracking-[1px] transition-colors"
+                  type="button"
                 >
                   +
                 </button>
               </div>
               <button
                 onClick={handleAddToCart}
-                className="bg-[#D87D4A] text-white px-[31px] py-[15px] text-[13px] font-bold tracking-[1px] uppercase hover:bg-[#FBAF85] transition-colors"
+                disabled={!sessionId || isAdding}
+                className="bg-[#D87D4A] text-white px-[31px] h-[48px] text-[13px] font-bold tracking-[1px] uppercase hover:bg-[#FBAF85] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                ADD TO CART
+                {isAdding ? 'ADDING...' : 'ADD TO CART'}
               </button>
             </div>
           </div>

@@ -10,39 +10,43 @@ export default function Home() {
     <div className="min-h-screen bg-[#FAFAFA] font-sans">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="bg-[#191919] text-white overflow-hidden">
-        <div className="max-w-[1110px] mx-auto px-6 lg:px-0">
-          <div className="flex flex-col md:flex-row items-center justify-between py-[112px] md:py-[126px] lg:py-[128px]">
-            <div className="max-w-[398px] mb-8 md:mb-0 text-center md:text-left">
-              <p className="text-white/50 text-[14px] tracking-[10px] uppercase mb-[24px]">
-                NEW PRODUCT
-              </p>
-              <h1 className="text-[36px] md:text-[56px] leading-[40px] md:leading-[58px] font-bold tracking-[1.29px] md:tracking-[2px] uppercase mb-[24px] hover:text-white">
-                XX99 MARK II<br />HEADPHONES
-              </h1>
-              <p className="text-white/75 text-[15px] leading-[25px] mb-[28px] md:mb-[40px]">
-                Experience natural, lifelike audio and exceptional build quality made for the passionate music enthusiast.
-              </p>
-              <Link
-                href="/product/xx99-mark-two-headphones"
-                className="inline-block bg-[#D87D4A] text-white text-[13px] font-bold tracking-[1px] uppercase px-[30px] py-[15px] hover:bg-[#FBAF85] transition-colors"
-              >
-                SEE PRODUCT
-              </Link>
-            </div>
-            <div className="relative w-[200px] h-[200px] md:w-[360px] md:h-[360px] lg:w-[410px] lg:h-[410px]">
-              <Image
-                src="/Bitmap-9.png"
-                alt="XX99 Mark II Headphones"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+        {/* Hero Section */}
+  <section className="bg-[#191919] text-white overflow-hidden">
+  <div className="max-w-[1110px] mx-auto px-6 lg:px-0">
+    <div className="flex flex-col md:flex-row items-center justify-between py-[112px] md:py-[126px] lg:py-[128px]">
+      
+      {/* Image First on Mobile */}
+      <div className="relative w-[200px] h-[200px] md:w-[360px] md:h-[360px] lg:w-[410px] lg:h-[410px] order-1 md:order-2 mb-8 md:mb-0">
+        <Image
+          src="/Bitmap-9.png"
+          alt="XX99 Mark II Headphones"
+          fill
+          className="object-contain"
+          priority
+        />
+      </div>
+
+      {/* Text Second on Mobile */}
+      <div className="max-w-[398px] order-2 md:order-1 text-center md:text-left">
+        <p className="text-white/50 text-[14px] tracking-[10px] uppercase mb-[24px]">
+          NEW PRODUCT
+        </p>
+        <h1 className="text-[36px] md:text-[56px] leading-[40px] md:leading-[58px] font-bold tracking-[1.29px] md:tracking-[2px] uppercase mb-[24px] hover:text-white">
+          XX99 MARK II<br />HEADPHONES
+        </h1>
+        <p className="text-white/75 text-[15px] leading-[25px] mb-[28px] md:mb-[40px]">
+          Experience natural, lifelike audio and exceptional build quality made for the passionate music enthusiast.
+        </p>
+        <Link
+          href="/product/xx99-mark-two-headphones"
+          className="inline-block bg-[#D87D4A] text-white text-[13px] font-bold tracking-[1px] uppercase px-[30px] py-[15px] hover:bg-[#FBAF85] transition-colors"
+        >
+          SEE PRODUCT
+        </Link>
+      </div>
+    </div>
+  </div>
+  </section>
 
       {/* Category Cards */}
       <section className="max-w-[1110px] mx-auto px-6 lg:px-0 py-[92px] md:py-[96px] lg:py-[120px]">

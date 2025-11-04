@@ -1,31 +1,23 @@
-import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
-import "./globals.css";
-import { CartProvider } from "@/app/context/CartContext";
-import CartModal from "@/app/components/CartModal";
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-});
+import type { Metadata } from 'next';
+import './globals.css';
+import { ConvexClientProvider } from './ConvexClientProvider';
 
 export const metadata: Metadata = {
-  title: "Audiophile | Home",
-  description: "The best audio gear for audiophiles",
+  title: 'Audiophile',
+  description: 'Premium audio equipment store',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={`${manrope.className} antialiased`}>
-        <CartProvider>
+      <body>
+        <ConvexClientProvider>
           {children}
-          <CartModal />
-        </CartProvider>
+        </ConvexClientProvider>
       </body>
     </html>
   );

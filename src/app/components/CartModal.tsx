@@ -1,26 +1,112 @@
 'use client';
 
-import { useCart } from '@/app/context/CartContext';
+import { useMutation, useQuery } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { Id } from '../../../convex/_generated/dataModel';
+import { getOrCreateSessionId } from '@/app/lib/session';
 
-export default function CartModal() {
-  const { cart, isCartOpen, closeCart, updateQuantity, getTotalPrice, clearCart, openCart } = useCart();
+export default function CartModal({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  const [sessionId, setSessionId] = useState<string>('');
 
-  if (!isCartOpen) return null;
+  useEffect(() => {
+    const init = async () => {
+      const sid = getOrCreateSessionId();
+      setSessionId(sid);
+    };
+    init();
+  }, []);
 
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartData = useQuery(api.carts.getCart, sessionId ? { sessionId } : 'skip');
+  const updateQuantity = useMutation(api.carts.updateCartItem);
+  const clearCart = useMutation(api.carts.clearCart);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  type CartItem = {
+    _id: Id<'carts'>;
+    image?: string;
+    name?: string;
+    shortName?: string;
+    price: number;
+    quantity: number;
+  };
+
+  const cart: CartItem[] = cartData?.items || [];
+  const totalItems = cartData?.totalItems ?? 0;
+  const totalPrice = cartData?.total ?? 0;
+
+  const handleUpdateQuantity = async (cartItemId: Id<'carts'>, newQuantity: number) => {
+    try {
+      await updateQuantity({
+        sessionId,
+        productId: cartItemId as unknown as string,
+        quantity: newQuantity,
+      });
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      alert(error instanceof Error ? error.message : 'Failed to update quantity');
+    }
+  };
+
+  const handleClearCart = async () => {
+    if (!sessionId) return;
+    try {
+      await clearCart({ sessionId });
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+    }
+  };
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Overlay */}
       <div
-        className="fixed inset-0 bg-black/40 z-[60] top-[90px]"
-        onClick={closeCart}
+        className="fixed inset-0 bg-black/40 z-[60] animate-fadeIn"
+        onClick={onClose}
       />
 
-      {/* Modal - Positioned below navbar */}
-      <div className="fixed top-[114px] right-[24px] md:right-[39px] lg:right-[165px] w-[327px] md:w-[377px] bg-white rounded-lg shadow-2xl z-[70]">
+      {/* Modal - Desktop (right aligned) and Mobile (centered) */}
+      <div
+        className="
+          fixed 
+          z-[70]
+          
+          /* Mobile: Centered */
+          left-1/2 -translate-x-1/2
+          top-[100px] sm:top-[110px]
+          
+          /* Desktop: Right aligned */
+          lg:left-auto lg:translate-x-0
+          lg:right-[165px]
+          lg:top-[120px]
+          
+          w-[90%] max-w-[377px]
+          bg-white 
+          rounded-[8px] 
+          shadow-2xl 
+          animate-slideDown
+        "
+      >
         <div className="p-[24px] md:p-[32px]">
           {/* Header */}
           <div className="flex items-center justify-between mb-[32px]">
@@ -28,60 +114,75 @@ export default function CartModal() {
               CART ({totalItems})
             </h2>
             <button
-              onClick={() => clearCart()}
-              className="text-[15px] text-black/50 hover:text-[#D87D4A] underline decoration-1 underline-offset-2 transition-colors"
+              onClick={handleClearCart}
+              className="text-[15px] text-black/50 hover:text-[#D87D4A] underline transition-colors"
             >
               Remove all
             </button>
           </div>
 
-          {/* Cart Items */}
-          {cart.length === 0 ? (
-            <div className="text-center py-[40px]">
-              <p className="text-black/50 text-[15px] leading-[25px]">Your cart is empty</p>
+          {/* Empty State */}
+          {cart.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-[15px] text-black/50 mb-4">Your cart is empty</p>
+              <button
+                onClick={onClose}
+                className="text-[13px] font-bold text-[#D87D4A] uppercase tracking-[1px] hover:underline"
+              >
+                Continue Shopping
+              </button>
             </div>
-          ) : (
+          )}
+
+          {/* Items */}
+          {cart.length > 0 && (
             <>
-              {/* Items List */}
-              <div className="space-y-[24px] mb-[32px] max-h-[320px] overflow-y-auto">
-                {cart.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between gap-[16px]">
-                    {/* Product Image */}
+              <div className="flex flex-col gap-[24px] mb-[32px] max-h-[300px] overflow-y-auto">
+                {cart.map((item: CartItem) => (
+                  <div
+                    key={item._id}
+                    className="flex items-center justify-between gap-[16px]"
+                  >
+                    {/* Image */}
                     <div className="relative w-[64px] h-[64px] bg-[#F1F1F1] rounded-lg overflow-hidden flex-shrink-0">
                       <Image
-                        src={item.image}
-                        alt={item.name}
+                        src={item.image || '/placeholder.png'}
+                        alt={item.name || 'Product'}
                         fill
                         className="object-contain p-[8px]"
                       />
                     </div>
 
-                    {/* Product Info */}
+                    {/* Info */}
                     <div className="flex-1 min-w-0">
                       <h3 className="text-[15px] font-bold leading-[25px] truncate">
-                        {item.shortName}
+                        {item.shortName || item.name || 'Product'}
                       </h3>
-                      <p className="text-[14px] text-black/50 font-bold leading-[25px]">
+                      <p className="text-[14px] text-black/50 font-bold">
                         $ {item.price.toLocaleString()}
                       </p>
                     </div>
 
-                    {/* Quantity Controls */}
-                    <div className="flex items-center bg-[#F1F1F1] h-[32px]">
+                    {/* Quantity */}
+                    <div className="flex items-center bg-[#F1F1F1] h-[32px] rounded">
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="px-[12px] h-full text-black/25 hover:text-[#D87D4A] font-bold text-[13px] tracking-[1px] transition-colors"
-                        type="button"
+                        onClick={() =>
+                          item.quantity > 1 &&
+                          handleUpdateQuantity(item._id as Id<'carts'>, item.quantity - 1)
+                        }
+                        className="px-[12px] h-full text-black/25 hover:text-[#D87D4A] font-bold text-[13px] transition-colors disabled:cursor-not-allowed"
+                        disabled={item.quantity <= 1}
                       >
                         -
                       </button>
-                      <span className="px-[16px] h-full flex items-center font-bold text-[13px] tracking-[1px] min-w-[40px] justify-center">
+                      <span className="px-[16px] h-full flex items-center font-bold text-[13px] min-w-[40px] justify-center">
                         {item.quantity}
                       </span>
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="px-[12px] h-full text-black/25 hover:text-[#D87D4A] font-bold text-[13px] tracking-[1px] transition-colors"
-                        type="button"
+                        onClick={() =>
+                          handleUpdateQuantity(item._id as Id<'carts'>, item.quantity + 1)
+                        }
+                        className="px-[12px] h-full text-black/25 hover:text-[#D87D4A] font-bold text-[13px] transition-colors"
                       >
                         +
                       </button>
@@ -92,17 +193,17 @@ export default function CartModal() {
 
               {/* Total */}
               <div className="flex items-center justify-between mb-[24px]">
-                <span className="text-[15px] text-black/50 uppercase leading-[25px]">TOTAL</span>
+                <span className="text-[15px] text-black/50 uppercase">TOTAL</span>
                 <span className="text-[18px] font-bold">
-                  $ {getTotalPrice().toLocaleString()}
+                  $ {totalPrice.toLocaleString()}
                 </span>
               </div>
 
-              {/* Checkout Button */}
+              {/* Checkout */}
               <Link
                 href="/checkout"
-                onClick={closeCart}
-                className="block w-full bg-[#D87D4A] text-white text-[13px] font-bold tracking-[1px] uppercase py-[15px] text-center hover:bg-[#FBAF85] transition-colors rounded-none"
+                onClick={onClose}
+                className="block w-full bg-[#D87D4A] text-white text-[13px] font-bold tracking-[1px] uppercase py-[15px] text-center hover:bg-[#FBAF85] transition-colors"
               >
                 CHECKOUT
               </Link>
@@ -110,6 +211,49 @@ export default function CartModal() {
           )}
         </div>
       </div>
+
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+          }
+        }
+
+        @media (min-width: 1024px) {
+          @keyframes slideDown {
+            from {
+              opacity: 0;
+              transform: translateY(-10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+
+        .animate-slideDown {
+          animation: slideDown 0.3s ease-out;
+        }
+      `}</style>
     </>
   );
 }

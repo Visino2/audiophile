@@ -11,7 +11,7 @@ export default function Headphones() {
       <Navbar />
 
       {/* Page Header */}
-      <section className="bg-[#191919] text-white">
+      <section className="bg-[#191919] text-white hidden md:block">
         <div className="max-w-[1110px] mx-auto px-6 lg:px-0">
           <div className="py-[98px] text-center">
             <h1 className="text-[28px] md:text-[40px] font-bold tracking-[2px] md:tracking-[1.43px] uppercase text-white">
