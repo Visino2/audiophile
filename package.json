@@ -3,12 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "dev:server": "npx convex dev"
-  },
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "convex": "npx convex dev"
+},
   "dependencies": {
     "convex": "^1.28.2",
     "framer-motion": "^12.23.24",
