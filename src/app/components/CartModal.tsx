@@ -81,32 +81,30 @@ export default function CartModal({
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 bg-black/40 z-[60] animate-fadeIn"
+        className="fixed inset-0 bg-black/40 z-60 animate-fadeIn"
         onClick={onClose}
       />
 
       {/* Modal - Desktop (right aligned) and Mobile (centered) */}
-      <div
-        className="
-          fixed 
-          z-[70]
-          
-          /* Mobile: Centered */
-          left-1/2 -translate-x-1/2
-          top-[100px] sm:top-[110px]
-          
-          /* Desktop: Right aligned */
-          lg:left-auto lg:translate-x-0
-          lg:right-[165px]
-          lg:top-[120px]
-          
-          w-[90%] max-w-[377px]
-          bg-white 
-          rounded-[8px] 
-          shadow-2xl 
-          animate-slideDown
-        "
-      >
+<div
+  className="
+    fixed 
+    z-[70]
+    left-1/2 -translate-x-1/2
+    top-[100px] sm:top-[110px]
+    lg:left-auto lg:translate-x-0
+    lg:right-[165px]
+    lg:top-[120px]
+    w-[90%] max-w-[377px]
+    bg-white 
+    rounded-[8px] 
+    shadow-2xl 
+    animate-slideDown
+  "
+>
+  {/* Mobile: Centered */}
+  {/* Desktop: Right aligned */}
+
         <div className="p-[24px] md:p-[32px]">
           {/* Header */}
           <div className="flex items-center justify-between mb-[32px]">

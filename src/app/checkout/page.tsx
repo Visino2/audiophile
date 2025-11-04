@@ -94,6 +94,7 @@ export default function CheckoutPage() {
       {showSuccessModal && (
         <>
           <div className="fixed inset-0 bg-black/40 z-40" />
+          
           <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
             <div className="bg-white rounded-lg p-[32px] md:p-[48px] w-full max-w-[540px] max-h-[90vh] overflow-y-auto">
               <div className="w-[64px] h-[64px] bg-[#D87D4A] rounded-full flex items-center justify-center mb-[23px] md:mb-[33px]">
