@@ -2,7 +2,7 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
-  // 🛍️ Products Table
+  
   products: defineTable({
     id: v.string(),
     name: v.string(),
@@ -14,7 +14,7 @@ export default defineSchema({
     category: v.optional(v.string()),
   }).index("by_product_id", ["id"]),
 
-  // 🧺 Carts Table
+ 
   carts: defineTable({
     sessionId: v.string(),
     productId: v.string(),
@@ -23,7 +23,7 @@ export default defineSchema({
     .index("by_session", ["sessionId"])
     .index("by_session_product", ["sessionId", "productId"]),
 
-  // 📦 Orders Table
+ 
   orders: defineTable({
     sessionId: v.string(),
     items: v.array(

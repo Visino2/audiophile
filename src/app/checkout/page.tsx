@@ -16,6 +16,20 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('e-money');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderSummary, setOrderSummary] = useState({
+    items: [] as Array<{
+      _id: string;
+      image?: string;
+      name?: string;
+      shortName?: string;
+      price: number;
+      quantity: number;
+    }>,
+    subtotal: 0,
+    shipping: 0,
+    vat: 0,
+    grandTotal: 0,
+  });
 
   useEffect(() => {
     setSessionId(getOrCreateSessionId());
@@ -39,6 +53,15 @@ export default function CheckoutPage() {
 
     setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
+
+    // Save the order details BEFORE submitting
+    setOrderSummary({
+      items: [...cart],
+      subtotal,
+      shipping,
+      vat,
+      grandTotal,
+    });
 
     try {
       await createOrder({
@@ -111,14 +134,14 @@ export default function CheckoutPage() {
 
               <div className="rounded-lg overflow-hidden mb-[23px] md:mb-[46px]">
                 <div className="bg-[#F1F1F1] p-[24px]">
-                  {cart.length > 0 && cart[0] && (
+                  {orderSummary.items.length > 0 && orderSummary.items[0] && (
                     <>
                       <div className="flex items-center gap-[16px] pb-[12px]">
-                        {cart[0].image && (
+                        {orderSummary.items[0].image && (
                           <div className="relative w-[50px] h-[50px] bg-white rounded-lg overflow-hidden flex-shrink-0">
                             <Image
-                              src={cart[0].image}
-                              alt={cart[0].name || 'Product image'}
+                              src={orderSummary.items[0].image}
+                              alt={orderSummary.items[0].name || 'Product image'}
                               fill
                               className="object-contain p-2"
                             />
@@ -126,22 +149,22 @@ export default function CheckoutPage() {
                         )}
                         <div className="flex-1 min-w-0">
                           <h3 className="text-[15px] font-bold leading-[25px]">
-                            {cart[0].shortName || cart[0].name || 'Product'}
+                            {orderSummary.items[0].shortName || orderSummary.items[0].name || 'Product'}
                           </h3>
                           <p className="text-[14px] text-black/50 font-bold">
-                            $ {cart[0].price.toLocaleString()}
+                            $ {orderSummary.items[0].price.toLocaleString()}
                           </p>
                         </div>
                         <span className="text-[15px] text-black/50 font-bold">
-                          x{cart[0].quantity}
+                          x{orderSummary.items[0].quantity}
                         </span>
                       </div>
 
-                      {cart.length > 1 && (
+                      {orderSummary.items.length > 1 && (
                         <>
                           <div className="border-t border-black/10 my-[12px]" />
                           <p className="text-[12px] font-bold text-black/50 text-center">
-                            and {cart.length - 1} other item(s)
+                            and {orderSummary.items.length - 1} other item(s)
                           </p>
                         </>
                       )}
@@ -154,7 +177,7 @@ export default function CheckoutPage() {
                     GRAND TOTAL
                   </p>
                   <p className="text-white text-[18px] font-bold">
-                    $ {grandTotal.toLocaleString()}
+                    $ {orderSummary.grandTotal.toLocaleString()}
                   </p>
                 </div>
               </div>

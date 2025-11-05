@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
-// 🧾 Create Order from Cart
+
 export const createOrder = mutation({
   args: {
     sessionId: v.string(),
@@ -17,7 +17,7 @@ export const createOrder = mutation({
     paymentMethod: v.string(),
   },
   handler: async (ctx, args) => {
-    // Fetch cart items for this session
+    
     const cartItems = await ctx.db
       .query("carts")
       .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
@@ -54,13 +54,13 @@ export const createOrder = mutation({
       })
     );
 
-    // Calculate total amount
+   
     const totalAmount = orderItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
 
-    // Create new order record
+    
     const orderId = await ctx.db.insert("orders", {
       sessionId: args.sessionId,
       items: orderItems,
@@ -71,7 +71,7 @@ export const createOrder = mutation({
       createdAt: Date.now(),
     });
 
-    // Update stock for each product
+
     await Promise.all(
       cartItems.map(async (item) => {
         const product = await ctx.db
@@ -87,14 +87,13 @@ export const createOrder = mutation({
       })
     );
 
-    // Clear cart after successful order
+    
     await Promise.all(cartItems.map((item) => ctx.db.delete(item._id)));
 
     return orderId;
   },
 });
 
-// 📦 Get Single Order
 export const getOrder = query({
   args: { orderId: v.id("orders") },
   handler: async (ctx, args) => {
@@ -104,7 +103,7 @@ export const getOrder = query({
   },
 });
 
-// 📋 Get All Orders for a Session
+
 export const getOrdersBySession = query({
   args: { sessionId: v.string() },
   handler: async (ctx, args) => {
