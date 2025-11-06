@@ -1,8 +1,5 @@
 @import "tailwindcss";
 
-/* =========================================
-   Audiophile Design System Base Styles
-   ========================================= */
 @layer base {
   :root {
     --color-primary: #D87D4A;
@@ -47,9 +44,6 @@
   }
 }
 
-/* =========================================
-   Components
-   ========================================= */
 @layer components {
   .btn {
     @apply inline-flex items-center justify-center uppercase font-bold text-[13px] tracking-[1px] rounded-none transition-all duration-300;
@@ -88,9 +82,7 @@
   }
 }
 
-/* =========================================
-   Animations (fix for Turbopack)
-   ========================================= */
+
 @layer utilities {
   @keyframes fadeIn {
     from { opacity: 0; }

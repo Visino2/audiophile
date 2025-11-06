@@ -16,15 +16,15 @@ export default function Home() {
     <div className="flex flex-col md:flex-row items-center justify-between py-[112px] md:py-[126px] lg:py-[128px]">
       
       {/* Image First on Mobile */}
-      <div className="relative w-[200px] h-[200px] md:w-[360px] md:h-[360px] lg:w-[410px] lg:h-[410px] order-1 md:order-2 mb-8 md:mb-0">
-        <Image
-          src="/Bitmap-9.png"
-          alt="XX99 Mark II Headphones"
-          fill
-          className="object-contain"
-          priority
-        />
-      </div>
+     <div className="relative w-[250px] h-[250px] md:w-[400px] md:h-[400px] lg:w-[500px] lg:h-[500px] order-1 md:order-2 mb-8 md:mb-0">
+      <Image
+       src="/Bitmap-9.png"
+       alt="XX99 Mark II Headphones"
+       fill
+       className="object-contain"
+       priority
+     />
+   </div>
 
       {/* Text Second on Mobile */}
       <div className="max-w-[398px] order-2 md:order-1 text-center md:text-left">

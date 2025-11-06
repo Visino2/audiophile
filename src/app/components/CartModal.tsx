@@ -42,31 +42,33 @@ export default function CartModal({
 
   if (!isOpen) return null;
 
-  type CartItem = {
-    _id: Id<'carts'>;
-    image?: string;
-    name?: string;
-    shortName?: string;
-    price: number;
-    quantity: number;
-  };
+ type CartItem = {
+  _id: Id<'carts'>;
+  productId: string;
+  image?: string;
+  name?: string;
+  shortName?: string;
+  price: number;
+  quantity: number;
+};
+
 
   const cart: CartItem[] = cartData?.items || [];
   const totalItems = cartData?.totalItems ?? 0;
   const totalPrice = cartData?.total ?? 0;
 
-  const handleUpdateQuantity = async (cartItemId: Id<'carts'>, newQuantity: number) => {
-    try {
-      await updateQuantity({
-        sessionId,
-        productId: cartItemId as unknown as string,
-        quantity: newQuantity,
-      });
-    } catch (error) {
-      console.error('Error updating quantity:', error);
-      alert(error instanceof Error ? error.message : 'Failed to update quantity');
-    }
-  };
+const handleUpdateQuantity = async (productId: string, newQuantity: number) => {
+  try {
+    await updateQuantity({
+      sessionId,
+      productId,
+      quantity: newQuantity,
+    });
+  } catch (error) {
+    console.error('Error updating quantity:', error);
+    alert(error instanceof Error ? error.message : 'Failed to update quantity');
+  }
+};
 
   const handleClearCart = async () => {
     if (!sessionId) return;
@@ -85,7 +87,7 @@ export default function CartModal({
         onClick={onClose}
       />
 
-      {/* Modal - Desktop (right aligned) and Mobile (centered) */}
+     
 <div
   className="
     fixed 
@@ -102,8 +104,7 @@ export default function CartModal({
     animate-slideDown
   "
 >
-  {/* Mobile: Centered */}
-  {/* Desktop: Right aligned */}
+  
 
         <div className="p-[24px] md:p-[32px]">
           {/* Header */}
@@ -163,27 +164,30 @@ export default function CartModal({
 
                     {/* Quantity */}
                     <div className="flex items-center bg-[#F1F1F1] h-[32px] rounded">
-                      <button
-                        onClick={() =>
-                          item.quantity > 1 &&
-                          handleUpdateQuantity(item._id as Id<'carts'>, item.quantity - 1)
-                        }
-                        className="px-[12px] h-full text-black/25 hover:text-[#D87D4A] font-bold text-[13px] transition-colors disabled:cursor-not-allowed"
-                        disabled={item.quantity <= 1}
+                         <button
+                      onClick={() =>
+                      item.quantity > 1 &&
+                      handleUpdateQuantity(item.productId, item.quantity - 1)
+                       }
+                      className="px-[12px] h-full text-black/25 hover:text-[#D87D4A] font-bold text-[13px] transition-colors disabled:cursor-not-allowed"
+                      disabled={item.quantity <= 1}
                       >
-                        -
-                      </button>
-                      <span className="px-[16px] h-full flex items-center font-bold text-[13px] min-w-[40px] justify-center">
-                        {item.quantity}
+                      -
+                     </button>
+
+                      <span className="px-[16px] h-full flex items-center font-bold text-[13px] min-w-[40px] justify-center text-[#000000]">
+                      {item.quantity}
                       </span>
+
+
                       <button
-                        onClick={() =>
-                          handleUpdateQuantity(item._id as Id<'carts'>, item.quantity + 1)
+                       onClick={() =>
+                       handleUpdateQuantity(item.productId, item.quantity + 1)
                         }
-                        className="px-[12px] h-full text-black/25 hover:text-[#D87D4A] font-bold text-[13px] transition-colors"
-                      >
+                       className="px-[12px] h-full text-black/25 hover:text-[#D87D4A] font-bold text-[13px] transition-colors"
+                        >
                         +
-                      </button>
+                     </button>
                     </div>
                   </div>
                 ))}

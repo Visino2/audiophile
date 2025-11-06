@@ -53,7 +53,7 @@ export const seedProducts = mutation({
         image: "/Bitmap-12.jpg",
         category: "speakers",
         description: "Wireless streaming with minimal loss",
-        inStock: 8,
+        inStock: 48,
       },
       {
         id: "zx9-speaker",
@@ -63,7 +63,7 @@ export const seedProducts = mutation({
         image: "/Bitmap-4.png",
         category: "speakers",
         description: "Truly wireless connectivity",
-        inStock: 5,
+        inStock: 25,
       },
     ];
 

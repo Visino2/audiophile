@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
-// 🛒 Get Cart
+//  Get Cart
 export const getCart = query({
   args: { sessionId: v.string() },
   handler: async (ctx, args) => {
@@ -138,7 +138,7 @@ export const removeFromCart = mutation({
   },
 });
 
-// 🧹 Clear entire cart
+// Clear entire cart
 export const clearCart = mutation({
   args: { sessionId: v.string() },
   handler: async (ctx, args) => {
@@ -150,7 +150,7 @@ export const clearCart = mutation({
   },
 });
 
-// 🧾 Create Order (✅ new addition)
+// Create Order 
 export const createOrder = mutation({
   args: {
     sessionId: v.string(),
@@ -174,7 +174,7 @@ export const createOrder = mutation({
 
     if (cartItems.length === 0) throw new Error("Cart is empty");
 
-    // 2️⃣ Build order items and calculate total
+    // Build order items and calculate total
     const orderItems = await Promise.all(
       cartItems.map(async (item) => {
         const product = await ctx.db
@@ -221,4 +221,6 @@ export const createOrder = mutation({
 
     return { success: true, totalAmount };
   },
+
+  
 });
